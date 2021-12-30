@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:62201",
+      "applicationUrl": "http://localhost:62201/KeySwitchTesterSite",
       "sslPort": 0
     }
   },

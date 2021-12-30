@@ -1,7 +1,111 @@
 ﻿@page "/"
+@inject HttpClient Http
+@inject IJSRuntime js
 
-<h1>Hello, world!</h1>
+<input id="key-input-field"
+       style="opacity: 0.5;"
+       @onkeydown="KeyHandler"
+       @onkeydown:preventDefault />
 
-Welcome to your new app.
+<div class="main">
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+            <h2>@(currentKeySwitch?.Name ?? "(Press any key)")</h2>
+            <div><a href="@(currentKeySwitch?.Url)" target="_blank">@(currentKeySwitch?.Url == null ? "--" : "(link)")</a></div>
+            <div>@((keys == null || keyswitches == null) ? "(Loading...)" : "")</div>
+        </div>
+        <div class="pure-u-1-2">
+            <table class="pure-table pure-table-horizontal switch-data">
+                <tbody>
+                    <tr>
+                        <td>Type</td>
+                        <td>@(currentKeySwitch?.SwitchType)</td>
+                    </tr>
+                    <tr>
+                        <td>Silent?</td>
+                        <td>@(currentKeySwitch?.Silent)</td>
+                    </tr>
+                    <tr>
+                        <td>Operating force</td>
+                        <td>@(currentKeySwitch?.OperatingForce) cN</td>
+                    </tr>
+                    <tr>
+                        <td>Pre travel</td>
+                        <td>@($"{currentKeySwitch?.PreTravel:#.0}") mm</td>
+                    </tr>
+                    <tr>
+                        <td>Total travel</td>
+                        <td>@($"{currentKeySwitch?.TotalTravel:#.0}") mm</td>
+                    </tr>
+                    <tr>
+                        <td>Manufacturer</td>
+                        <td>@(currentKeySwitch?.Manufacturer)</td>
+                    </tr>
+                    <tr>
+                        <td>Mount type</td>
+                        <td>@(currentKeySwitch?.MountType)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pure-u-1-2">
+            <img src="@(currentKeySwitch?.ImageUrl ?? "image/noimage.png")"
+                 class="pure-img"
+                 alt="@(currentKeySwitch?.Name)">
+        </div>
+    </div>
+</div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    private string key;
+    private KeySwitch currentKeySwitch = null;
+    private List<Key> keys;
+    private List<KeySwitch> keyswitches;
+
+    protected override async Task OnInitializedAsync()
+    {
+        keys = await Http.GetFromJsonAsync<List<Key>>("data/key.json");
+        keyswitches = await Http.GetFromJsonAsync<List<KeySwitch>>("data/keyswitch.json");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        js.InvokeVoidAsync("jsfunction.focusElement", "key-input-field");
+    }
+
+    private void KeyHandler(KeyboardEventArgs e)
+    {
+        key = e.Key;
+        string currentKeySwitchName = keys.FirstOrDefault(k => k.KeyName == key)?.KeySwitch;
+        if (string.IsNullOrEmpty(currentKeySwitchName))
+        {
+            currentKeySwitch = null;
+        }
+        else
+        {
+            currentKeySwitch = keyswitches.FirstOrDefault(sw => sw.Name == currentKeySwitchName);
+        }
+    }
+
+    public class Key
+    {
+        public string KeyName { get; set; }
+        public string KeySwitch { get; set; }
+    }
+
+    public class KeySwitch
+    {
+        public string Name { get; set; }
+        public string SwitchType { get; set; }
+        public bool Silent { get; set; }
+        public decimal OperatingForce { get; set; }
+        public decimal PreTravel { get; set; }
+        public decimal TotalTravel { get; set; }
+        public string Manufacturer { get; set; }
+        public string MountType { get; set; }
+        public string Url { get; set; }
+        public string ImageUrl { get; set; }
+    }
+}

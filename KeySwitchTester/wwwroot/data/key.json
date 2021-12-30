@@ -1,0 +1,30 @@
+[
+  {
+    "KeyName": "q",
+    "KeySwitch": "Cherry MX Red"
+  },
+  {
+    "KeyName": "w",
+    "KeySwitch": "Cherry MX Speed Silver"
+  },
+  {
+    "KeyName": "e",
+    "KeySwitch": "Cherry MX Brown"
+  },
+  {
+    "KeyName": "r",
+    "KeySwitch": "Cherry MX Black"
+  },
+  {
+    "KeyName": "t",
+    "KeySwitch": "Cherry MX Blue"
+  },
+  {
+    "KeyName": "a",
+    "KeySwitch": "Cherry MX Silent Red"
+  },
+  {
+    "KeyName": "s",
+    "KeySwitch": "Cherry MX Silent Black"
+  }
+]
